@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRUD API REST</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+	crossorigin="anonymous">
+<!-- JavaScript Bundle with Popper -->
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+	integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+	crossorigin="anonymous"></script>
+</head>
+
+<body style="width: 60%; margin: 0 auto;">
+	<h1>CRUD Categoria</h1>
+	<section class="crud">
+		<article>
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<h2 class="crud-title">Agregar Categoria</h2>
+					<form class="crud-form form-inline">
+						<div class="form-group row">
+							<div class="form-group mx-sm-3">
+								<input type="text" name="descrip_cat" placeholder="Descripcion"
+									required>
+							</div>
+						</div>
+						<br>
+						<div class="form-group row">
+							<div class="form-group mx-sm-3">
+								<button type="submit" class="btn btn-primary" value="Guardar">Guardar</button>
+							</div>
+							<input type="hidden" name="cod_cat">
+						</div>
+					</form>
+				</div>
+			</div>
+		</article>
+		<article>
+			<br> <br>
+			<h2>Listado Categorias</h2>
+			<table class="crud-table">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Descripcion</th>
+					</tr>
+				</thead>
+				<tbody>
+					<template id="crud-template">
+						<tr>
+							<td class="cod_cat"></td>
+							<td class="descrip_cat"></td>
+							<td>
+								<button class="edit">Editar</button>
+								<button class="delete">Eliminar</button>
+							</td>
+						</tr>
+					</template>
+				</tbody>
+			</table>
+		</article>
+	</section>
+
+	<script>
+    /* **********     Curso JavaScript: 115. APIs REST: CRUD con AJAX (1/2) - #jonmircha     ********** */
+    /* **********     Curso JavaScript: 116. APIs REST: CRUD con AJAX (2/2) - #jonmircha     ********** */
+    const d = document,
+      $table = d.querySelector(".crud-table"),
+      $form = d.querySelector(".crud-form"),
+      $title = d.querySelector(".crud-title"),
+      $template = d.getElementById("crud-template").content,
+      $fragment = d.createDocumentFragment();
+
+    const ajax = (options) => {
+      let { url, method, success, error, data } = options;
+      const xhr = new XMLHttpRequest();
+
+      xhr.addEventListener("readystatechange", e => {
+        if (xhr.readyState !== 4) return;
+
+        if (xhr.status >= 200 && xhr.status < 300) {
+          let json = JSON.parse(xhr.responseText);
+          success(json);
+        } else {
+          let message = xhr.statusText || "Ocurrió un error";
+          error(`Error ${xhr.status}: ${message}`);
+        }
+      });
+
+      xhr.open(method || "GET", url);
+      xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+      xhr.send(JSON.stringify(data));
+    }
+
+    const getAll = () => {
+      ajax({
+        url: "http://localhost:8080/apiC/all",
+        success: (res) => {
+          console.log(res);
+
+          res.forEach(el => {
+            $template.querySelector(".cod_cat").textContent = el.cod_cat;
+            $template.querySelector(".descrip_cat").textContent = el.descrip_cat;
+            $template.querySelector(".edit").dataset.cod_cat = el.cod_cat;
+            $template.querySelector(".edit").dataset.descrip_cat = el.descrip_cat;
+            $template.querySelector(".delete").dataset.cod_cat = el.cod_cat;
+
+            let $clone = d.importNode($template, true);
+            $fragment.appendChild($clone);
+          });
+
+          $table.querySelector("tbody").appendChild($fragment);
+        },
+        error: (err) => {
+          console.log(err);
+          $table.insertAdjacentHTML("afterend", `<p><b>${err}</b></p>`);
+        }
+      })
+    }
+
+    d.addEventListener("DOMContentLoaded", getAll);
+
+    d.addEventListener("submit", e => {
+      if (e.target === $form) {
+        e.preventDefault();
+
+        if (!e.target.id.value) {
+          //Create - POST
+          ajax({
+            url: "http://localhost:8080/apiC/save",
+            method: "POST",
+            success: (res) => location.reload(),
+            error: (err) => $form.insertAdjacentHTML("afterend", `<p><b>${err}</b></p>`),
+            data: {
+              cod_cat: e.target.cod_cat.value,
+              descrip_cat: e.target.descrip_cat.value
+            }
+          });
+        } else {
+          //Update - PUT
+          ajax({
+            url: `http://localhost:8080/apiC/save/${e.target.cod_cat.value}`,
+            method: "PUT",
+            success: (res) => location.reload(),
+            error: (err) => $form.insertAdjacentHTML("afterend", `<p><b>${err}</b></p>`),
+            data: {
+              cod_cat: e.target.cod_cat.value,
+              descrip_cat: e.target.descrip_cat.value
+            }
+          });
+        }
+      }
+    });
+
+    d.addEventListener("click", e => {
+      if (e.target.matches(".edit")) {
+        $title.textContent = "Editar ";
+        $form.cod_cat.value = e.target.dataset.cod_cat;
+        $form.descrip_cat.value = e.target.dataset.descrip_cat;
+      }
+
+      if (e.target.matches(".delete")) {
+        let isDelete = confirm(`¿Estás seguro de eliminar el id ${e.target.dataset.cod_cat}?`);
+
+        if (isDelete) {
+          //Delete - DELETE
+          ajax({
+        	  url: `http://localhost:8080/apiC/delete/${e.target.dataset.cod_cat}`,
+            method: "POST",
+            success: (res) => location.reload(),
+            error: (err) => alert(err)
+          });
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>

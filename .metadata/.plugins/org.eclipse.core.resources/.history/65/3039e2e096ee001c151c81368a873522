@@ -1,0 +1,26 @@
+package com.pastry.ecom.controller;
+
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.pastry.ecom.serviceImpl.CategoriaServiceImpl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+
+@Controller
+@RequestMapping("/categoria")
+public class HomeController {
+	
+	@Autowired
+	@Qualifier("categoriaservice")
+	private CategoriaServiceImpl categoriaservice;
+	
+	@GetMapping(value="/all")
+	public String inicio (){
+		return "index";
+	}
+	
+}

@@ -1,0 +1,9 @@
+package com.pastry.ecom.util;
+
+public class Paginas {
+
+	public static final String INICIO = "principal";
+	public static final String LISTAC = "listarC";
+	public static final String CRUDC = "crudC";
+	
+}

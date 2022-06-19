@@ -1,0 +1,15 @@
+package com.pastry.ecom.controller;
+
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.stereotype.Controller;
+
+@HomeController
+public class Controller {
+	
+	@GetMapping(value="/all")
+	public String inicio (){
+		return "cate";
+	}
+	
+}
