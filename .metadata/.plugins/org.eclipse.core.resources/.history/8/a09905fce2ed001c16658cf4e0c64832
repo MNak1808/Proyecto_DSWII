@@ -1,0 +1,8 @@
+package com.cibertec.util;
+
+public class Paginas {
+
+	public static final String LISTA_POKEMONES = "index";
+	public static final String POKEMON_FORM = "formularioPokemon";
+	
+}

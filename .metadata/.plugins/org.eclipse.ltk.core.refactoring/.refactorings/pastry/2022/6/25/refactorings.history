@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;JS&apos; to &apos;static&apos;&#x0D;&#x0A;- Original project: &apos;pastry&apos;&#x0D;&#x0A;- Destination element: &apos;static&apos;&#x0D;&#x0A;- Original element: &apos;JS&apos;" description="Copy folder" element1="src/main/resources/static/JS" files="0" flags="589830" folders="1" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1655509509893" target="/ecom/src/main/resources/static" units="0" version="1.0"/>
+</session>

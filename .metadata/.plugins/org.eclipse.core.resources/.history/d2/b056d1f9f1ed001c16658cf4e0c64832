@@ -1,0 +1,5 @@
+package com.pastry.ecom.serviceImpl;
+
+public class CategoriaService {
+
+}
